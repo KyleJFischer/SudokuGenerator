@@ -12,6 +12,9 @@ namespace SodukuMaker
         {
             var result = false;
             var count = 0;
+            Console.WriteLine("Begin Sudoku Generation");
+            Console.WriteLine("Generate Final Solution");
+
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             var puz = new Puzzle();
@@ -31,6 +34,11 @@ namespace SodukuMaker
                 }
                 count++; 
             }
+            Console.WriteLine("Start The Removing Process");
+            var finalResult = GeneratePuzzles(puz, 4);
+            finalResult.outputToFile(@"Q:\finaloutput.txt");
+            puz.outputToFile(@"Q:\final.txt");
+
             stopWatch.Stop();
             // Get the elapsed time as a TimeSpan value.
             TimeSpan ts = stopWatch.Elapsed;
@@ -40,31 +48,14 @@ namespace SodukuMaker
                 ts.Hours, ts.Minutes, ts.Seconds,
                 ts.Milliseconds / 10);
             Console.WriteLine("RunTime " + elapsedTime);
-
-
-            var playPuzzle = DeepClone(puz);
-
-
-            playPuzzle.print();
-            Console.WriteLine("Valid Board: " + playPuzzle.isValidBoard());
-
-            Console.WriteLine(Environment.NewLine);
-            Console.WriteLine(Environment.NewLine);
-            Console.WriteLine(Environment.NewLine);
-            Console.WriteLine("BEGIN SOLVER");
-            var finalResult = GeneratePuzzles(puz);
-            finalResult.outputToFile(@"Q:\finaloutput.txt");
-            puz.outputToFile(@"Q:\final.txt");
-
-            Console.WriteLine("DONE");
             Console.ReadLine();
         }
 
-        public static Puzzle GeneratePuzzles(Puzzle masterCopy)
+        public static Puzzle GeneratePuzzles(Puzzle masterCopy, int diff)
         {
             var playCopy = DeepClone(masterCopy);
-            var maxCount = 4;
-
+            var maxCount = diff;//This Controls Difficulty
+            Console.WriteLine("Begin Removing Squares till No matches remain");
             while (maxCount > 0)
             {
                 var squareToClear = Generator.GetRandomSquare(playCopy);
@@ -82,12 +73,12 @@ namespace SodukuMaker
 
                     if (masterCopy.ComparePuzzles(positiveResult) && masterCopy.ComparePuzzles(negativeResult))
                     {
-                        Console.WriteLine("WE GOOD");
-                        maxCount = 4;
+                        Console.WriteLine($"Removed Square at {squareToClear.x}, {squareToClear.y}");
+                        maxCount = diff;
                     }
                     else
                     {
-                        Console.WriteLine("We Bad");
+                        //
                         squareToClear.value = oldValue;
                         maxCount--;
                     }
