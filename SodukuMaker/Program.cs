@@ -69,27 +69,30 @@ namespace SodukuMaker
             {
                 var squareToClear = Generator.GetRandomSquare(playCopy);
                 var oldValue = squareToClear.value;
-                squareToClear.value = null;
+                if (oldValue != null) {
+                    squareToClear.value = null;
 
-                var minusCopy = DeepClone(playCopy);
-                var plusCopy = DeepClone(playCopy);
-
-
-                var positiveResult = SolvePositive(plusCopy, 0, 0);
-                var negativeResult = SolveNegative(minusCopy, 0, 0);
+                    var minusCopy = DeepClone(playCopy);
+                    var plusCopy = DeepClone(playCopy);
 
 
-                if (masterCopy.ComparePuzzles(positiveResult) && masterCopy.ComparePuzzles(negativeResult))
-                {
-                    Console.WriteLine("WE GOOD");
+                    var positiveResult = SolvePositive(plusCopy, 0, 0);
+                    var negativeResult = SolveNegative(minusCopy, 0, 0);
+
+
+                    if (masterCopy.ComparePuzzles(positiveResult) && masterCopy.ComparePuzzles(negativeResult))
+                    {
+                        Console.WriteLine("WE GOOD");
+                        maxCount = 4;
+                    }
+                    else
+                    {
+                        Console.WriteLine("We Bad");
+                        squareToClear.value = oldValue;
+                        maxCount--;
+                    }
                 }
-                else
-                {
-                    Console.WriteLine("We Bad");
-                    squareToClear.value = oldValue;
-                    playCopy.print();
-                    return playCopy;
-                }
+               
             }
             playCopy.print();
             return playCopy;
